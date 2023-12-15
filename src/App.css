@@ -41,7 +41,6 @@
 
 .page-content{
   width: 100%;
-  margin-inline: auto;
 }
 
 .card-container{
@@ -78,6 +77,9 @@
 
   .card-container{
     width: 100%;
+    /* margin-inline: auto; */
+    height: 500px;
+    background-color: red;
   }
   
 }
