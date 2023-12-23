@@ -50,13 +50,13 @@
     color: #001F3F;
     cursor: pointer;
     margin-top: 20px;
-    width: 170px;
+    width: 190px;
     font-family: Roboto;
     font-size: 20px;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
-    padding: 15px 0px;
+    padding: 15px 10px;
     text-transform: capitalize;
     display: flex;
     justify-content: space-between;
@@ -132,8 +132,8 @@
 
 .card-left .col-2 button {
     margin-top: 30px;
-    width: 170px;
-    padding: 15px 0px;
+    width: 190px;
+    padding: 15px 10px;
     color: #A9A9A9;
     font-family: Roboto;
     font-size: 20px;

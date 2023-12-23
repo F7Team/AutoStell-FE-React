@@ -19,6 +19,10 @@ const BottomSheet = ({ isOpen, toggleCloseBottomSheet, toggleBottomSheet }) => {
   const [role, setRole] = useState(null);
   const [data, setData] = useState(null);
   const [sending, setSending] = useState(false);
+  const [alert, setAlert] = useState({
+    success: false,
+    message: ''
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +42,7 @@ const BottomSheet = ({ isOpen, toggleCloseBottomSheet, toggleBottomSheet }) => {
     setSending(true);
     const requestData = {
       role: role,
-      email: email,
+      email: email
     };
 
     console.log(requestData);
@@ -68,9 +72,23 @@ const BottomSheet = ({ isOpen, toggleCloseBottomSheet, toggleBottomSheet }) => {
         };
 
         fetchData();
+        setAlert({ success: true, message: 'Successfully joined the waitlist.' });
+        setTimeout(() => {
+          setAlert({ success: false, message: '' });
+        }, 3000);
+      }
+      else{
+        setAlert({ success: false, message: 'Failed to join the waitlist. Please try again.' });
+        setTimeout(() => {
+          setAlert({ success: false, message: '' });
+        }, 3000);
       }
     } catch (error) {
       console.error("Error during POST request:", error);
+      setAlert({ success: false, message: 'An error occurred. Please try again later.' });
+      setTimeout(() => {
+        setAlert({ success: false, message: '' });
+      }, 3000);
     }
 
     setSending(false);
@@ -102,6 +120,9 @@ const BottomSheet = ({ isOpen, toggleCloseBottomSheet, toggleBottomSheet }) => {
             onChange={(e) => setEmail(e.target.value)}
             disabled={sending}
           />
+          <div className={` alert-box ${alert.success ? 'success' : 'failed'}`}>
+            <p>{alert.message}</p>
+          </div>
           <button onClick={handleJoinWaitlist} disabled={sending}>
             {sending ? "Joining..." : "Join Waitlist"}
           </button>
