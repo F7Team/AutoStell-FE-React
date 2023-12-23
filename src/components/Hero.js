@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 // import React from "react";
 import Header from "./Header";
 import "./Hero.css";
 import topBackImage from "../images/footer-card-image.png";
+import car1 from '../images/rotating-cars/1.png'
 
-export default function Hero({ onClickJoin }) {
+const Hero = memo(({ onClickJoin }) => {
   const [rotationAngle, setRotationAngle] = useState(1);
   const [images, setImages] = useState([]);
 
@@ -16,6 +17,7 @@ export default function Hero({ onClickJoin }) {
         return img;
       });
       await Promise.all(imageArray.map((img) => img.decode()));
+      console.log('images loaded')
       setImages(imageArray);
     };
 
@@ -23,6 +25,7 @@ export default function Hero({ onClickJoin }) {
   }, []);
 
   useEffect(() => {
+    console.log('Started interval calculation')
     const intervalId = setInterval(() => {
       setRotationAngle((prevAngle) => (prevAngle === 72 ? 1 : prevAngle + 1));
     }, 100);
@@ -36,11 +39,14 @@ export default function Hero({ onClickJoin }) {
       <div className="hero-image-background">
           <img src={topBackImage} alt="backImage" className="static-image" />
           <img
-            src={images.length ? images[rotationAngle - 1].src : ""}
+            src={images.length ? images[rotationAngle - 1].src : car1}
             alt="Rotating Car"
             className="rotating-car"
           />
       </div>
     </div>
   );
-}
+});
+
+export default Hero;
+
