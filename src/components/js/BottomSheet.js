@@ -14,7 +14,7 @@ const BottomSheet = ({ isOpen, toggleCloseBottomSheet, toggleBottomSheet }) => {
     "Others",
   ];
   const apiUrlPost = "https://f7team.vercel.app/api/autostells/join_waitlist/";
-  const apiUrlGet = "https://f7team.vercel.app/api/autostells/";
+  const apiUrlGet = "https://f7team.vercel.app/api/autostells/join_waitlist/";
   const [email, setEmail] = useState("");
   const [role, setRole] = useState(null);
   const [data, setData] = useState(null);
@@ -98,7 +98,7 @@ const BottomSheet = ({ isOpen, toggleCloseBottomSheet, toggleBottomSheet }) => {
     <div className={`bottom-sheet ${isOpen ? "open" : ""}`}>
       <div className="wait-list-drawer">
         <div className="head">
-          <p onClick={toggleBottomSheet}>Waitlist: {data ? data.length : 0}</p>
+          <p onClick={toggleBottomSheet}>Waitlist: {data ? data.waitlist : 0}</p>
           {isOpen ? (
             <img
               src={closeBtn}
