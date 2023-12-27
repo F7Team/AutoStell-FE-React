@@ -17,7 +17,6 @@ const Hero = memo(({ onClickJoin }) => {
         return img;
       });
       await Promise.all(imageArray.map((img) => img.decode()));
-      console.log('images loaded')
       setImages(imageArray);
     };
 
@@ -25,7 +24,6 @@ const Hero = memo(({ onClickJoin }) => {
   }, []);
 
   useEffect(() => {
-    console.log('Started interval calculation')
     const intervalId = setInterval(() => {
       setRotationAngle((prevAngle) => (prevAngle === 72 ? 1 : prevAngle + 1));
     }, 100);

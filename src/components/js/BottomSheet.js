@@ -13,43 +13,44 @@ const BottomSheet = ({ isOpen, toggleCloseBottomSheet, toggleBottomSheet }) => {
     "Be A Repairer",
     "Others",
   ];
-  const apiUrlPost = "https://f7team.vercel.app/api/autostells/join_waitlist/";
-  const apiUrlGet = "https://f7team.vercel.app/api/autostells/join_waitlist/";
+
+  const apiUrl = "https://f7team.vercel.app/api/autostells/join_waitlist/";
   const [email, setEmail] = useState("");
   const [role, setRole] = useState(null);
   const [data, setData] = useState(null);
   const [sending, setSending] = useState(false);
-  const [alert, setAlert] = useState({
-    success: false,
-    message: ''
-  });
+  const [alert, setAlert] = useState({ success: false, message: '' });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(apiUrlGet);
+        const response = await fetch(apiUrl);
         const jsonData = await response.json();
         setData(jsonData);
       } catch (error) {
-        console.error("Error during GET request:", error);
+        console.error("Error during data fetching:", error);
       }
     };
 
     fetchData();
-  }, []); // Fetch data when the component mounts
+  }, []); 
 
   const handleJoinWaitlist = async () => {
+    const requestData = { role, email };
+    if (requestData.role === null) {
+      setAlertAndTimeout(false, 'Please select a role before joining the waitlist.');
+      return;
+    }
+    
+    if (requestData.email.trim() === '') {
+      setAlertAndTimeout(false, 'Please enter a valid email address.');
+      return;
+    }
+
     setSending(true);
-    const requestData = {
-      role: role,
-      email: email
-    };
-
-    console.log(requestData);
-
     try {
       // Make POST request
-      const response = await fetch(apiUrlPost, {
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,41 +58,40 @@ const BottomSheet = ({ isOpen, toggleCloseBottomSheet, toggleBottomSheet }) => {
         body: JSON.stringify(requestData),
       });
 
-      console.log(response);
-
       // If the POST request is successful, fetch data again
       if (response.ok) {
-        const fetchData = async () => {
-          try {
-            const response = await fetch(apiUrlGet);
-            const jsonData = await response.json();
-            setData(jsonData);
-          } catch (error) {
-            console.error("Error during GET request:", error);
-          }
-        };
+        fetchWaitlistData();
+        setAlertAndTimeout(true, 'Successfully joined the waitlist.');
+      } else {
+        const errorMessage = await response.json();
+        const alertMessage =
+          errorMessage.message === "Joined Already!"
+            ? "Failed to Join, You already joined using this email"
+            : "Failed to join the waitlist. Please try again.";
 
-        fetchData();
-        setAlert({ success: true, message: 'Successfully joined the waitlist.' });
-        setTimeout(() => {
-          setAlert({ success: false, message: '' });
-        }, 3000);
-      }
-      else{
-        setAlert({ success: false, message: 'Failed to join the waitlist. Please try again.' });
-        setTimeout(() => {
-          setAlert({ success: false, message: '' });
-        }, 3000);
+        setAlertAndTimeout(false, alertMessage);
       }
     } catch (error) {
       console.error("Error during POST request:", error);
-      setAlert({ success: false, message: 'An error occurred. Please try again later.' });
-      setTimeout(() => {
-        setAlert({ success: false, message: '' });
-      }, 3000);
+      setAlertAndTimeout(false, 'An error occurred. Please try again later.');
+    } finally {
+      setSending(false);
     }
+  };
 
-    setSending(false);
+  const setAlertAndTimeout = (success, message) => {
+    setAlert({ success, message });
+    setTimeout(() => setAlert({ success: false, message: '' }), 3000);
+  };
+
+  const fetchWaitlistData = async () => {
+    try {
+      const response = await fetch(apiUrl);
+      const jsonData = await response.json();
+      setData(jsonData);
+    } catch (error) {
+      console.error("Error during GET request:", error);
+    }
   };
 
   return (
@@ -100,11 +100,7 @@ const BottomSheet = ({ isOpen, toggleCloseBottomSheet, toggleBottomSheet }) => {
         <div className="head">
           <p onClick={toggleBottomSheet}>Waitlist: {data ? data.waitlist : 0}</p>
           {isOpen ? (
-            <img
-              src={closeBtn}
-              alt="close-btn"
-              onClick={toggleCloseBottomSheet}
-            />
+            <img src={closeBtn} alt="close-btn" onClick={toggleCloseBottomSheet} />
           ) : (
             <p onClick={toggleBottomSheet} className="head-button">
               Join Waitlist
